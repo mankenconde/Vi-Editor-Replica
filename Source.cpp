@@ -5,11 +5,11 @@ using namespace std;
 
 int main() {
 
-	char input;
 
 	Editor myEditor;
 
 	myEditor.readFile("Text.txt");
+	/*myEditor.readFile("keyword.txt");*/
 
 	myEditor.displayLines();
 
@@ -17,21 +17,34 @@ int main() {
 		ch[0] = _getche();
 		//ch[1] = _getche();
 
+		
+
 	do {
 
 		myEditor.processCommand(ch);
 
-		system("cls");
+		system("cls"); //Clears the screen before displaying the lines again
 
 		myEditor.displayLines();
 
 		ch[0] = _getch();
 
-		if(ch[0]=='d'){
-		ch[1] = _getch();
+		if (ch[0] == 'd') {
+			ch[1] = _getch();
 		}
 
+		else if (ch[0]-'0' >= 1 && ch[0]-'0' <= 10) {
+			ch[1] = _getch();
+		}
+
+
 	} while (ch[0] != 'q');
+
+	myEditor.setCurrentLine(myEditor.getCount());
+
+	system("cls"); //Clears the screen before displaying the lines again
+
+	myEditor.displayLines();
 
 	cout << "\n You have EXITED the program." << endl;
 

@@ -23,6 +23,7 @@ void Command::setCommand(char inCommand)
 }
 
 
+
 string Command::getCommand() const
 {
 	return mCommand;
