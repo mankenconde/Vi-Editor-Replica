@@ -16,12 +16,13 @@ public:
 	string getValue() const;
 	void setLine(int);
 	int getLine()const;
+	/*int getPosition()const;*/
 
 private:
 	string mCommand;
 	string mValue;
 	int mLineNumber;
-	//int position;
+	/*int mPosition;*/
 };
 
 #endif

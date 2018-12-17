@@ -170,11 +170,13 @@ void Editor::processCommand(char ch[2])
 	// k: Page up
 	// l: right
 	// h: left
+	// dd: delete line
 	// R: replace Line
 	// r: replace Char NOT WORKING (may not be necessary)
 	// u: undo
 	// x: delete char
 	// #+command = example "4J" would move 4 lines down *EXTRA CREDIT*
+	//y: redo
 
 	string newLine;
 	Command myCommand;
@@ -184,15 +186,48 @@ void Editor::processCommand(char ch[2])
 	string input; //Local Variable for Inser command
 	int insert_line_count = 1; //Local Variable for Inser command
 
-	int charToNum = 0;
-	int prefixAction = 0;
+	int chToNum = 0; //to store prefix after converting it form char to int
+	int prefixAction = 1; //used to increment the commands by inputed prefix
+	int possibleAction = 0; //used for Error handling with prefix commands
 
-	if (ch[0] > '0' && ch[0] <= '10') {
-		charToNum = ch[0] - '0';
-		/*if (ch[1] == 'j') {
-			prefixAction=mCurrentL charToNum;
-		}*/
+	if (ch[0]-'0' >=1 && ch[0]-'0' <= 10) {
+		chToNum = ch[0] - '0';
+		if (ch[1] == 'j') {
+			prefixAction = chToNum;
+			ch[0] = ch[1];
+		}
+
+		else if (ch[1] == 'k') {
+			prefixAction = chToNum;
+			ch[0] = ch[1];
+		}
+
+		else if (ch[1] == 'l') {
+			prefixAction = chToNum;
+			ch[0] = ch[1];
+		}
+
+		else if (ch[1] == 'h') {
+			prefixAction = chToNum;
+			ch[0] = ch[1];
+		}
+
+		else if (ch[1] == 'u') {
+			prefixAction = chToNum;
+			ch[0] = ch[1];
+		}
+
+		else if (ch[1] == 'd') {
+			prefixAction = chToNum;
+			ch[0] = ch[1];
+		}
+
+		if (ch[1] == 'x') {
+			prefixAction = chToNum;
+			ch[0] = ch[1];
+		}
 	}
+
 
 
 
@@ -201,18 +236,24 @@ void Editor::processCommand(char ch[2])
 	{
 
 
+
 	case 'j':
 		myLine = myList.getEntry(mCurrentLine);
 		if (mCurrentLine == myList.getLength())
 			mCurrentLine = mCurrentLine;
 		else {
-			mCurrentLine++;
+			
+			mCurrentLine=prefixAction+mCurrentLine;
+			if (myList.getLength() < mCurrentLine) {
+				mCurrentLine = myList.getLength();
+			}
+			else{
 			if (myList.getEntry(mCurrentLine).length() < mCurrentPosition) {
 				mCurrentPosition = myList.getEntry(mCurrentLine).length();
 			}
-
+			}
 		}
-
+		
 		break;
 	case 'k':
 
@@ -221,11 +262,15 @@ void Editor::processCommand(char ch[2])
 		if (mCurrentLine == 1)
 			mCurrentLine = mCurrentLine;
 		else {
-			mCurrentLine--;
+			mCurrentLine=mCurrentLine-prefixAction;
+			if (mCurrentLine < 1) {
+				mCurrentLine = 1;
+			}
+			else{
 			if (myList.getEntry(mCurrentLine).length() < mCurrentPosition) {
 				mCurrentPosition = myList.getEntry(mCurrentLine).length();
 			}
-
+			}
 		}
 
 		break;
@@ -236,14 +281,14 @@ void Editor::processCommand(char ch[2])
 		if (mCurrentPosition == myLine.length())
 			mCurrentPosition = mCurrentPosition;
 		else
-			mCurrentPosition++;
+			mCurrentPosition=prefixAction+mCurrentPosition;
 		break;
 	case 'h':
 		myLine = myList.getEntry(mCurrentLine);
 		if (mCurrentPosition == 0)
 			mCurrentPosition = mCurrentPosition;
 		else
-			mCurrentPosition--;
+			mCurrentPosition=mCurrentPosition-prefixAction;
 		break;
 
 
@@ -257,6 +302,7 @@ void Editor::processCommand(char ch[2])
 		myCommand.setValue(myLine);
 		undoStack.push(myCommand);
 
+		/*redoStack.~LinkedStack();*/
 		break;
 
 
@@ -268,12 +314,17 @@ void Editor::processCommand(char ch[2])
 
 
 	case'u':
-
+		
+		
+		
+		for(int i=0;i<prefixAction;i++){
 		if (!undoStack.isEmpty()) {
+			//redoStack.push(undoStack.peek());
 
 			if (undoStack.peek().getCommand()[0] == 'd') {
 				myList.insert(undoStack.peek().getLine(), undoStack.peek().getValue());
 				mLineCount++;
+				
 				undoStack.pop();
 				
 			}
@@ -281,32 +332,41 @@ void Editor::processCommand(char ch[2])
 			else if (undoStack.peek().getCommand()[0] == 'I') {
 				myList.remove(undoStack.peek().getLine());
 				mLineCount--;
+				
 				undoStack.pop();
 			}
 
 			else if (undoStack.peek().getCommand()[0] == 'x') {
 				myList.replace(undoStack.peek().getLine(), undoStack.peek().getValue());
+				
 				undoStack.pop();
 			}
+
+		}
 		}
 
 		break;
 
 	case'd':
+
+		possibleAction = myList.getLength() - mCurrentLine +1;
+		if (possibleAction < prefixAction)
+			prefixAction = possibleAction;
+
+		for(int i=0;i<prefixAction;i++){
 		if (ch[1] == 'd') {
 
 			myCommand.setValue(myList.getEntry(mCurrentLine));
 			myCommand.setCommand(ch[0]);
 			myCommand.setLine(mCurrentLine);
 			undoStack.push(myCommand);
-			/*undoStack.push(myCommand.getValue());
-			undoStack.push(myCommand.getLine());*/
 
 			myList.remove(mCurrentLine);
 
 			mLineCount--;	
 		}
-
+		}
+		/*redoStack.~LinkedStack();*/
 		break;
 
 	case 'I':
@@ -346,10 +406,11 @@ void Editor::processCommand(char ch[2])
 			mLineCount++;
 
 		}
-
+		/*redoStack.~LinkedStack();*/
 		break;
 
 	case 'x':
+		for(int i=0;i<prefixAction;i++){
 		charString = myList.getEntry(mCurrentLine);
 
 		//if(charString[mCurrentPosition]!=' '){
@@ -363,9 +424,39 @@ void Editor::processCommand(char ch[2])
 		myList.replace(mCurrentLine, charString);
 		//}
 
+		}
+		/*redoStack.~LinkedStack();*/
+		break;
 
+	/*case 'y':
+		for (int i = 0; i < prefixAction; i++) {
+			if (!redoStack.isEmpty()) {
+
+				if (redoStack.peek().getCommand()[0] == 'd') {
+					myList.remove(redoStack.peek().getLine());
+					mLineCount--;
+					redoStack.pop();
+
+				}
+
+				else if (undoStack.peek().getCommand()[0] == 'I') {
+					myList.insert(undoStack.peek().getLine(), undoStack.peek().getValue());
+					mLineCount++;
+					redoStack.pop();
+				}
+
+				else if (undoStack.peek().getCommand()[0] == 'x') {
+					myList.replace(redoStack.peek().getLine(), redoStack.peek().getValue());
+					redoStack.pop();
+				}
+
+			}
+		}*/
 	}
+	
 }
+
+
 
 void Editor::replaceLine(string sentence, int position) {
 

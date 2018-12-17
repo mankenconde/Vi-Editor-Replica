@@ -23,6 +23,7 @@ private:
 	LinkedList<string> myList;
 	/*LinkedList<char>myChar;*/
 	LinkedStack<Command> undoStack;
+	/*LinkedStack<Command> redoStack;*/
 	int mCurrentPosition;
 	int mCurrentLine;
 	string myLine;

@@ -47,3 +47,7 @@ void Command::setLine(int inLineNumber) {
 int Command::getLine()const {
 	return mLineNumber;
 }
+
+//int Command::getPosition()const {
+//	return mPosition;
+//}

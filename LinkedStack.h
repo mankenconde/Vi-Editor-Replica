@@ -22,7 +22,7 @@ public:
 	// Constructors and destructor:
 	LinkedStack();                                   // Default constructor
 	LinkedStack(const LinkedStack<ItemType>& aStack);// Copy constructor 
-	virtual ~LinkedStack();                          // Destructor
+	virtual ~LinkedStack();                          // Deconstructor
 
 // Stack operations:
 	bool isEmpty() const;

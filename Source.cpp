@@ -33,9 +33,10 @@ int main() {
 			ch[1] = _getch();
 		}
 
-		else if (ch[0]-'0' >= 1 && ch[0]-'0' <= 10) {
+		else if (ch[0] - '0' >= 1 && ch[0] - '0' <= 10) {
 			ch[1] = _getch();
 		}
+
 
 
 	} while (ch[0] != 'q');
